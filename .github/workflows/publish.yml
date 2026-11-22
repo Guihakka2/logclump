@@ -1,5 +1,5 @@
 # Publishes to npm via Trusted Publishing (OIDC): no npm token stored in GitHub.
-# Setup once on npmjs.com > package settings > Trusted Publisher: repo Guihakka2/loglens, workflow publish.yml.
+# Setup once on npmjs.com > package settings > Trusted Publisher: repo Guihakka2/logclump, workflow publish.yml.
 name: Publish
 on:
   release: { types: [published] }

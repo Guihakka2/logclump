@@ -1,15 +1,15 @@
-# loglens
+# logclump
 
 [English](README.md) · Português · [日本語](README.ja.md)
 
-Um log de 2 GB com 80.000 erros normalmente são **6 problemas repetidos**. O loglens agrupa linhas parecidas (mesma mensagem, ids e números diferentes) e mostra quantas vezes cada uma aconteceu e quando apareceu **pela primeira e pela última vez**.
+Um log de 2 GB com 80.000 erros normalmente são **6 problemas repetidos**. O logclump agrupa linhas parecidas (mesma mensagem, ids e números diferentes) e mostra quantas vezes cada uma aconteceu e quando apareceu **pela primeira e pela última vez**.
 
 Offline, só leitura, zero dependências. A saída é mascarada, então dá para colar numa issue com segurança.
 
 ```bash
-npx @guihakka2/loglens app.log
-npx @guihakka2/loglens app.log.1.gz app.log --level warn
-kubectl logs deploy/api | npx @guihakka2/loglens
+npx @guihakka2/logclump app.log
+npx @guihakka2/logclump app.log.1.gz app.log --level warn
+kubectl logs deploy/api | npx @guihakka2/logclump
 ```
 
 - **Agrupa por assinatura**: números, UUIDs, IPs, emails, URLs, ids hex, tokens e textos entre aspas viram marcadores (`<n>`, `<email>`…).

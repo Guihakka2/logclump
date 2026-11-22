@@ -1,4 +1,4 @@
-// LogLens core: parse log lines, normalize messages into signatures, group them.
+// logclump core: parse log lines, normalize messages into signatures, group them.
 // Pure functions, no I/O, no network. Signatures mask variable data (ids, IPs, emails, tokens, quoted strings).
 
 export const printable = (s) => String(s).replace(/[\x00-\x08\x0b-\x1f\x7f-\x9f]/g, '?'); // no terminal escapes from logs

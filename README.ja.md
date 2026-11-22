@@ -1,15 +1,15 @@
-# loglens
+# logclump
 
 [English](README.md) · [Português](README.pt-BR.md) · 日本語
 
-2 GB のログに 80,000 件のエラーがあっても、実際には **同じ 6 つの問題の繰り返し** であることがほとんどです。loglens は似た行（同じメッセージで ID や数値だけ違うもの）をまとめ、件数と **最初・最後に発生した時刻** を表示します。
+2 GB のログに 80,000 件のエラーがあっても、実際には **同じ 6 つの問題の繰り返し** であることがほとんどです。logclump は似た行（同じメッセージで ID や数値だけ違うもの）をまとめ、件数と **最初・最後に発生した時刻** を表示します。
 
 オフライン・読み取り専用・依存ゼロ。出力はマスクされるので、そのまま issue に貼れます。
 
 ```bash
-npx @guihakka2/loglens app.log
-npx @guihakka2/loglens app.log.1.gz app.log --level warn
-kubectl logs deploy/api | npx @guihakka2/loglens
+npx @guihakka2/logclump app.log
+npx @guihakka2/logclump app.log.1.gz app.log --level warn
+kubectl logs deploy/api | npx @guihakka2/logclump
 ```
 
 - **シグネチャでグループ化**：数値・UUID・IP・メール・URL・16進 ID・トークン・引用符内の文字列をプレースホルダー（`<n>`、`<email>` など）に置換

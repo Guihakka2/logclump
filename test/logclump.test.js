@@ -7,9 +7,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { normalize, parseLine, analyze, printable } from '../src/index.js';
 
-const BIN = new URL('../bin/loglens.js', import.meta.url).pathname.replace(/^\/(\w:)/, '$1');
+const BIN = new URL('../bin/logclump.js', import.meta.url).pathname.replace(/^\/(\w:)/, '$1');
 const run = (args, input) => spawnSync(process.execPath, [BIN, ...args], { input, encoding: 'utf8', env: { ...process.env, NO_COLOR: '1' } });
-const tmp = (name, content) => { const d = mkdtempSync(join(tmpdir(), 'loglens-')); const p = join(d, name); writeFileSync(p, content); return p; };
+const tmp = (name, content) => { const d = mkdtempSync(join(tmpdir(), 'logclump-')); const p = join(d, name); writeFileSync(p, content); return p; };
 
 test('normalize masks variable data', () => {
   assert.equal(normalize('Timeout after 3000ms on 10.0.0.12:5432 for user bob@example.com'), 'Timeout after <n>ms on <ip> for user <email>');
@@ -79,6 +79,6 @@ test('CLI: file, stdin, gz, json, --fail and errors', () => {
   assert.equal(run([tmp('ok.log', 'INFO fine\n'), '--fail']).status, 0);
   const bad = run(['--levl', 'warn']);
   assert.equal(bad.status, 2); assert.match(bad.stderr, /did you mean --level/);
-  assert.equal(run([join(tmpdir(), 'nope-loglens.log')]).status, 2);
+  assert.equal(run([join(tmpdir(), 'nope-logclump.log')]).status, 2);
   assert.equal(run([p, '--level', 'loud']).status, 2);
 });

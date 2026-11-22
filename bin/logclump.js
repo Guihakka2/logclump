@@ -5,8 +5,8 @@ import { createGunzip } from 'node:zlib';
 import { parseArgs } from 'node:util';
 import { createAnalyzer, printable } from '../src/index.js';
 
-const HELP = `Usage: loglens [<file> ...] [options]
-       some-command | loglens
+const HELP = `Usage: logclump [<file> ...] [options]
+       some-command | logclump
 
 Groups similar log lines (same message, different ids/numbers) and shows how often
 each happened and when it was first and last seen. Reads plain text, JSON lines
@@ -28,7 +28,7 @@ const OPTIONS = { level: { type: 'string' }, top: { type: 'string' }, fail: { ty
   help: { type: 'boolean', short: 'h' }, version: { type: 'boolean', short: 'v' } };
 const LEVELS = { fatal: 'fatal', error: 'error', warn: 'warn', info: 'info', all: 'debug' };
 
-const die = (msg) => { process.stderr.write(`loglens: ${printable(msg)}\n`); process.exit(2); };
+const die = (msg) => { process.stderr.write(`logclump: ${printable(msg)}\n`); process.exit(2); };
 
 let args;
 try {
@@ -78,7 +78,7 @@ if (o.json) {
   const fmt = (n) => n.toLocaleString('en-US');
   const when = (a) => (a.time ? a.time.replace('T', ' ').replace(/\.\d+Z$|Z$/, '') : `${inputs.length > 1 ? `${a.file}:` : 'line '}${a.line}`);
   const label = minLevel === 'debug' ? 'lines' : `${minLevel}+ lines`;
-  console.log(`${c(1, 'loglens')}  ${fmt(r.lines)} lines read · ${fmt(r.matched)} ${label} in ${c(1, fmt(r.groups.length))} group${r.groups.length === 1 ? '' : 's'}\n`);
+  console.log(`${c(1, 'logclump')}  ${fmt(r.lines)} lines read · ${fmt(r.matched)} ${label} in ${c(1, fmt(r.groups.length))} group${r.groups.length === 1 ? '' : 's'}\n`);
   if (!shown.length) console.log(c(32, '  ✓ nothing found at this level'));
   else {
     const cw = Math.max(5, ...shown.map((g) => fmt(g.count).length));
