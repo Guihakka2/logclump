@@ -18,4 +18,10 @@ kubectl logs deploy/api | npx @guihakka2/logclump
 - **Arquivos grandes**: lê linha por linha, aceita `.gz` e stdin. ~1 s para 500 mil linhas.
 - **CI**: `--fail` sai com código 1 se encontrar algum grupo; `--json` para scripts.
 
+**Com agentes de IA (MCP):** `logclump --mcp` roda o logclump como servidor [MCP](https://modelcontextprotocol.io). Em vez de ler milhares de linhas cruas (lento e cheio de emails, IPs e tokens), o agente recebe o resumo curto e mascarado. Aceita arquivos dentro da pasta do projeto ou o texto do log, e é só leitura.
+
+```bash
+claude mcp add logclump -- npx -y @guihakka2/logclump --mcp
+```
+
 Opções: `--level` (fatal, error, warn, info, all), `--top N`, `--fail`, `--json`. Segurança: veja [SECURITY.md](SECURITY.md).

@@ -15,3 +15,7 @@ You will get a reply within 7 days.
 - npm releases are built by GitHub Actions with provenance; never by hand.
 
 Masking is best-effort: a secret written as plain words (no digits, no quotes) can still appear. Review output before sharing it publicly.
+
+## MCP mode
+
+`--mcp` (for AI agents) is read-only: files must be inside the folder the server was started in, paths starting with `-` are refused, the CLI runs without a shell, and results are masked exactly like the text output.
