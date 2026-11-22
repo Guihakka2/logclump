@@ -25,3 +25,5 @@ claude mcp add logclump -- npx -y @guihakka2/logclump --mcp
 ```
 
 オプション：`--level`（fatal / error / warn / info / all）、`--top N`、`--fail`、`--json`。セキュリティは [SECURITY.md](SECURITY.md) を参照。
+
+**Node.js がなくても使えます：** 各[リリース](https://github.com/Guihakka2/logclump/releases/latest)に Windows・macOS・Linux（x64 / ARM）用のプログラムがあります。ダウンロードして展開し、ターミナルで `logclump` を実行してください。GitHub Actions でビルドされ、`SHA256SUMS.txt` とビルド来歴の証明付き。まだ有料の署名はないため、初回は Windows の SmartScreen（「詳細情報」→「実行」）、macOS では `xattr -d com.apple.quarantine logclump` を一度実行してください。

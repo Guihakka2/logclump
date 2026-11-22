@@ -52,6 +52,12 @@ Other clients (VS Code, Cursor, Claude Desktop…) take the same command in thei
 
 The tool (`logclump_summarize`) takes log files inside the folder the server was started in, or log text the agent already has (for example from `kubectl logs`). It is read-only and its output is masked like the CLI's.
 
+## Download (no Node.js needed)
+
+Don't have Node.js? Each [release](https://github.com/Guihakka2/logclump/releases/latest) has a standalone program for Windows (x64, ARM), macOS (Apple silicon, Intel) and Linux (x64, ARM). Download the file for your system, unzip it and run `logclump` from a terminal, with the same options as above.
+
+The programs are built by GitHub Actions from this repository's code, with a `SHA256SUMS.txt` and a [build provenance attestation](https://docs.github.com/actions/security-for-github-actions/using-artifact-attestations) (`gh attestation verify <file> -R Guihakka2/logclump`). They are not code-signed with a paid certificate yet, so the first run shows a warning: on Windows, SmartScreen → "More info" → "Run anyway"; on macOS, run `xattr -d com.apple.quarantine logclump` once.
+
 ## Options
 
 | Option | |
