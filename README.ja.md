@@ -18,4 +18,10 @@ kubectl logs deploy/api | npx @guihakka2/logclump
 - **大きなファイル**：1 行ずつ処理、`.gz` と標準入力に対応。50 万行で約 1 秒
 - **CI**：`--fail` でグループが見つかれば終了コード 1、`--json` でスクリプト向け出力
 
+**AI エージェントから使う（MCP）：** `logclump --mcp` で [MCP](https://modelcontextprotocol.io) サーバーとして起動します。エージェントは大量の生ログ（遅く、メール・IP・トークンだらけ）を読む代わりに、短くマスクされた要約を受け取ります。プロジェクトフォルダー内のファイルまたはログのテキストを受け付け、読み取り専用です。
+
+```bash
+claude mcp add logclump -- npx -y @guihakka2/logclump --mcp
+```
+
 オプション：`--level`（fatal / error / warn / info / all）、`--top N`、`--fail`、`--json`。セキュリティは [SECURITY.md](SECURITY.md) を参照。

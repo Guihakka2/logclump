@@ -3,6 +3,7 @@ import { createReadStream, statSync, readFileSync } from 'node:fs';
 import { createInterface } from 'node:readline';
 import { createGunzip } from 'node:zlib';
 import { parseArgs } from 'node:util';
+import { fileURLToPath } from 'node:url';
 import { createAnalyzer, printable } from '../src/index.js';
 
 const HELP = `Usage: logclump [<file> ...] [options]
@@ -19,12 +20,14 @@ Options:
   --top N       Show the N biggest groups (default 20, 0 = all)
   --fail        Exit 1 if any group is found (for CI)
   --json        Machine-readable output
+  --mcp         Run as an MCP server (stdio) so AI agents can summarize logs,
+                read-only, files limited to the current folder
   -h, --help    Show help
   -v, --version Show version
 
 Exit codes: 0 = done, 1 = --fail and groups found, 2 = usage or read error`;
 
-const OPTIONS = { level: { type: 'string' }, top: { type: 'string' }, fail: { type: 'boolean' }, json: { type: 'boolean' },
+const OPTIONS = { mcp: { type: 'boolean' }, level: { type: 'string' }, top: { type: 'string' }, fail: { type: 'boolean' }, json: { type: 'boolean' },
   help: { type: 'boolean', short: 'h' }, version: { type: 'boolean', short: 'v' } };
 const LEVELS = { fatal: 'fatal', error: 'error', warn: 'warn', info: 'info', all: 'debug' };
 
@@ -41,6 +44,39 @@ try {
 const { values: o, positionals: files } = args;
 if (o.help) { console.log(HELP); process.exit(0); }
 if (o.version) { console.log(JSON.parse(readFileSync(new URL('../package.json', import.meta.url))).version); process.exit(0); }
+if (o.mcp) {
+  const { serveMcp, runCli, insideCwd } = await import('../src/mcp.js');
+  const self = fileURLToPath(import.meta.url);
+  await serveMcp({
+    name: 'logclump',
+    version: JSON.parse(readFileSync(new URL('../package.json', import.meta.url))).version,
+    instructions: 'logclump turns a big log into a short list of distinct problems, with counts and first/last seen times. Prefer it over reading raw logs: output is shorter and masks emails, IPs, ids and tokens.',
+    tools: [{
+      name: 'logclump_summarize',
+      title: 'Summarize errors in logs',
+      description: 'Group similar log lines (same message, different ids or numbers) and return each group with its count, level and first/last seen time. Pass log files inside the project folder, or paste log text (e.g. output of kubectl logs or docker compose logs). Numbers, ids, IPs, emails, URLs, tokens and quoted strings are masked in the result. Read-only.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          files: { type: 'array', maxItems: 50, items: { type: 'string' }, description: 'Log files inside the project folder (.log, .gz, JSON lines, logfmt…).' },
+          text: { type: 'string', maxLength: 5000000, description: 'Log text to analyze instead of files.' },
+          level: { type: 'string', enum: ['fatal', 'error', 'warn', 'info', 'all'], description: 'Minimum level (default error).' },
+          top: { type: 'integer', minimum: 0, maximum: 1000, description: 'Number of groups to return (default 20, 0 = all).' },
+        },
+        additionalProperties: false,
+      },
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+      validate: (a) => {
+        if (!a.files?.length && a.text === undefined) return 'pass "files" or "text"';
+        if (a.files?.length && a.text !== undefined) return 'pass either "files" or "text", not both';
+        for (const f of a.files ?? []) { if (f.startsWith('-')) return `invalid path "${f}"`; if (!insideCwd(f)) return `"${f}" is outside the project folder`; }
+        return null;
+      },
+      run: (a) => runCli(self, [...(a.files ?? []), '--json', ...(a.level ? ['--level', a.level] : []), ...(a.top !== undefined ? ['--top', String(a.top)] : [])], { input: a.text, okCodes: [0] }),
+    }],
+  });
+  process.exit(0);
+}
 const minLevel = LEVELS[(o.level ?? 'error').toLowerCase()];
 if (!minLevel) die(`unknown level "${o.level}" (use fatal, error, warn, info or all)`);
 const top = o.top === undefined ? 20 : Number(o.top);

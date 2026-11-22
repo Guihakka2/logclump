@@ -33,6 +33,25 @@ logclump  500,002 lines read · 71,464 error+ lines in 3 groups
 - **Big files**: streams line by line, reads `.gz` rotated logs and stdin. ~1 s for 500k lines.
 - **CI**: `--fail` exits 1 when any group is found, `--json` for scripts.
 
+## Use with AI agents (MCP)
+
+`logclump --mcp` runs logclump as an [MCP](https://modelcontextprotocol.io) server. Instead of reading thousands of raw log lines (slow, and full of emails, IPs and tokens), a coding agent gets the short, masked summary: each distinct problem, how often, first and last seen.
+
+```bash
+# Claude Code
+claude mcp add logclump -- npx -y @guihakka2/logclump --mcp
+# Codex
+codex mcp add logclump -- npx -y @guihakka2/logclump --mcp
+```
+
+Other clients (VS Code, Cursor, Claude Desktop…) take the same command in their MCP config:
+
+```json
+{ "mcpServers": { "logclump": { "command": "npx", "args": ["-y", "@guihakka2/logclump", "--mcp"] } } }
+```
+
+The tool (`logclump_summarize`) takes log files inside the folder the server was started in, or log text the agent already has (for example from `kubectl logs`). It is read-only and its output is masked like the CLI's.
+
 ## Options
 
 | Option | |
